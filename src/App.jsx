@@ -155,13 +155,13 @@ function AppButton({ children, onClick, type = "button", variant = "primary", cl
 
 function StatCard({ label, value, icon }) {
   return (
-    <div className="rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm">
+    <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
       <div className="flex items-center justify-between gap-4">
-        <div>
+        <div className="min-w-0">
           <p className="text-sm font-medium text-slate-500">{label}</p>
-          <p className="mt-2 text-2xl font-black tracking-tight text-slate-950">{rupiah.format(value)}</p>
+          <p className="mt-2 break-words text-xl font-black tracking-tight text-slate-950 sm:text-2xl">{rupiah.format(value)}</p>
         </div>
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-black text-lg font-black text-white">{icon}</div>
+        <div className="flex h-10 w-10 flex-none items-center justify-center rounded-full bg-black text-base font-black text-white sm:h-11 sm:w-11">{icon}</div>
       </div>
     </div>
   );
@@ -496,44 +496,44 @@ export default function CashflowTrackerTranslationAgency() {
 
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
-      <div className="mx-auto max-w-7xl space-y-8 px-6 py-10 md:px-10">
-        <nav className="mx-auto flex max-w-5xl items-center justify-between rounded-full border border-slate-200 bg-white px-8 py-4 shadow-sm">
-          <div className="text-3xl font-black tracking-tight">TranSaintika</div>
-          <div className="hidden gap-10 text-sm font-medium md:flex">
+      <div className="mx-auto max-w-7xl space-y-5 px-4 py-4 sm:px-6 md:space-y-6 md:px-8 md:py-6 lg:px-10">
+        <nav className="mx-auto flex min-h-16 max-w-6xl items-center justify-between gap-4 rounded-3xl border border-slate-200 bg-white px-4 py-3 shadow-sm sm:px-6 md:px-8">
+          <div className="text-2xl font-black tracking-tight sm:text-3xl">TranSaintika</div>
+          <div className="hidden gap-8 text-sm font-medium md:flex">
             <span>Dashboard</span>
             <span>Cashflow</span>
             <span>Transactions</span>
           </div>
-          <AppButton onClick={signOut}>Sign out</AppButton>
+          <AppButton onClick={signOut} className="!px-5 !py-2.5">Sign out</AppButton>
         </nav>
 
-        <section className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm md:p-10">
-          <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <div className="mb-5 inline-flex rounded-full border border-slate-200 bg-white px-5 py-3 text-sm text-slate-600 shadow-sm">
+        <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6 md:p-8">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div className="min-w-0">
+              <div className="mb-4 inline-flex max-w-full rounded-full border border-slate-200 bg-white px-4 py-2 text-xs text-slate-600 shadow-sm sm:text-sm">
                 Online finance workspace · Supabase secured
               </div>
-              <h1 className="text-5xl font-black uppercase leading-[0.95] tracking-[0.18em] text-slate-950 md:text-7xl">
-                TranSaintika
-                <span className="block text-slate-500">Finance Dashboard</span>
+              <h1 className="max-w-4xl text-3xl font-black uppercase leading-tight tracking-[0.08em] text-slate-950 sm:text-4xl md:text-5xl lg:text-6xl">
+                TRANSAINTIKA
+                <span className="block text-slate-500">FINANCE DASHBOARD</span>
               </h1>
-              <p className="mt-6 max-w-2xl text-xl leading-relaxed text-slate-500">
+              <p className="mt-4 max-w-2xl text-base leading-7 text-slate-500 sm:text-lg">
                 Track income, expenses, pending payments, and project cashflow for translation operations.
               </p>
-              <p className="mt-3 text-sm text-slate-500">Signed in as {session.user.email}</p>
+              <p className="mt-3 break-words text-sm text-slate-500">Signed in as {session.user.email}</p>
             </div>
 
-            <div className="flex flex-wrap gap-3">
-              <AppButton onClick={exportJson} variant="outline">Export JSON</AppButton>
-              <AppButton onClick={loadDemoData} variant="outline" disabled={loading}>Load Demo Data</AppButton>
-              <AppButton onClick={fetchTransactions} variant="outline" disabled={loading}>Refresh</AppButton>
+            <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-3 lg:w-auto lg:flex lg:flex-wrap lg:justify-end">
+              <AppButton onClick={exportJson} variant="outline" className="w-full lg:w-auto">Export JSON</AppButton>
+              <AppButton onClick={loadDemoData} variant="outline" className="w-full lg:w-auto" disabled={loading}>Load Demo Data</AppButton>
+              <AppButton onClick={fetchTransactions} variant="outline" className="w-full lg:w-auto" disabled={loading}>Refresh</AppButton>
             </div>
           </div>
         </section>
 
         {notice && <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 shadow-sm">{notice}</div>}
 
-        <section className="grid gap-4 md:grid-cols-4">
+        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <StatCard label="Paid Income" value={summary.paidIncome} icon="↗" />
           <StatCard label="Paid Expenses" value={summary.paidExpenses} icon="↘" />
           <StatCard label="Net Cashflow" value={summary.net} icon="◼" />

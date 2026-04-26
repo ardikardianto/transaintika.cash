@@ -214,11 +214,11 @@ function AuthScreen({ onNotice }) {
         <nav className="mx-auto flex max-w-4xl items-center justify-between rounded-full border border-slate-200 bg-white px-8 py-4 shadow-sm">
           <div className="text-3xl font-black tracking-tight">TranSaintika</div>
           <div className="hidden gap-10 text-sm font-medium md:flex">
-            <span>Home</span>
-            <span>Services</span>
-            <span>Contact</span>
+            <span>Finance Dashboard</span>
           </div>
-          <div className="rounded-full bg-black px-7 py-3 text-sm font-semibold text-white">WhatsApp</div>
+          <div className="rounded-full bg-black px-7 py-3 text-sm font-semibold text-white">
+            Login
+          </div>
         </nav>
 
         <section className="grid min-h-[78vh] items-center gap-12 py-16 lg:grid-cols-2">
@@ -240,35 +240,11 @@ function AuthScreen({ onNotice }) {
               Manage projects, cashflow, freelancer payments, and invoices in one protected workspace. Sign in to access your agency dashboard.
             </p>
 
-            <div className="mt-10 flex flex-wrap gap-4">
-              <button className="rounded-full bg-black px-8 py-4 text-base font-semibold text-white shadow-sm">
-                Contact via WhatsApp →
-              </button>
-              <button className="rounded-full border border-slate-300 bg-white px-8 py-4 text-base font-semibold text-slate-800 shadow-sm">
-                View Services
-              </button>
-            </div>
+            
           </div>
 
           <div className="mx-auto w-full max-w-xl rounded-[2rem] border border-slate-200 bg-white p-7 shadow-xl">
             <div className="rounded-[1.75rem] border border-slate-200 p-8">
-              <div className="mb-6 flex items-start justify-between">
-                <div>
-                  <p className="text-sm text-slate-500">Starting from</p>
-                  <h2 className="text-5xl font-black tracking-tight">IDR 250</h2>
-                  <p className="text-xl text-slate-500">per word</p>
-                </div>
-                <div className="rounded-full bg-black px-6 py-3 text-sm font-semibold text-white">
-                  CLEAR RATES
-                </div>
-              </div>
-
-              <div className="mb-8 space-y-4 text-lg text-slate-700">
-                <div>✓ English ↔ Indonesian</div>
-                <div>✓ Translation, editing, proofreading</div>
-                <div>✓ Academic and professional documents</div>
-              </div>
-
               <div className="border-t pt-8">
                 <h3 className="mb-6 text-4xl font-black">{mode === "signIn" ? "Sign in" : "Create Account"}</h3>
                 <form onSubmit={submit} className="space-y-5">

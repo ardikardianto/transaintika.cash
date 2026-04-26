@@ -209,80 +209,98 @@ function AuthScreen({ onNotice }) {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
-      <div className="mx-auto max-w-7xl px-6 py-10 md:px-10">
-        <nav className="mx-auto flex max-w-4xl items-center justify-between rounded-full border border-slate-200 bg-white px-8 py-4 shadow-sm">
-          <div className="text-3xl font-black tracking-tight">TranSaintika</div>
-          <div className="hidden gap-10 text-sm font-medium md:flex">
+    <main className="min-h-screen bg-white text-slate-950">
+      <div className="px-5 py-6 md:px-9">
+        <nav className="mx-auto flex min-h-[82px] w-full max-w-[1460px] items-center justify-between rounded-[2rem] border border-slate-100 bg-white px-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)] md:px-10">
+          <div className="text-3xl font-black md:text-[42px]">TranSaintika</div>
+          <div className="hidden text-xl font-medium text-black md:block">
             <span>Finance Dashboard</span>
           </div>
-          <div className="rounded-full bg-black px-7 py-3 text-sm font-semibold text-white">
+          <div className="rounded-full bg-black px-8 py-3 text-base font-bold text-white shadow-inner md:px-11 md:py-4 md:text-xl">
             Login
           </div>
         </nav>
 
-        <section className="grid min-h-[78vh] items-center gap-12 py-16 lg:grid-cols-2">
-          <div className="max-w-xl">
-            <div className="mb-8 inline-flex rounded-full border border-slate-200 bg-white px-5 py-3 text-sm text-slate-600 shadow-sm">
+        <section className="mx-auto grid min-h-[calc(100vh-132px)] max-w-[1400px] items-center gap-10 py-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
+          <div className="max-w-[700px]">
+            <div className="mb-12 inline-flex rounded-full border border-slate-200 bg-white px-5 py-2 text-base text-slate-700 shadow-sm md:text-xl">
               Malang, Indonesia · English & Indonesian
             </div>
 
-            <h1 className="text-6xl font-black leading-[0.95] tracking-tight md:text-8xl">
+            <h1 className="text-[56px] font-black leading-[1.02] text-black md:text-[78px] lg:text-[82px]">
               TranSaintika
               <span className="block">Language Services</span>
             </h1>
 
-            <p className="mt-5 text-2xl text-slate-600 md:text-3xl">
-              Secure finance dashboard for translation operations.
+            <p className="mt-7 text-2xl leading-relaxed text-slate-600 md:text-[26px]">
+              We can translate what hands can write.
             </p>
 
-            <p className="mt-10 max-w-lg text-xl leading-relaxed text-slate-500">
-              Manage projects, cashflow, freelancer payments, and invoices in one protected workspace. Sign in to access your agency dashboard.
+            <p className="mt-10 max-w-[660px] text-xl leading-[1.85] text-slate-500 md:text-2xl">
+              Clean, accurate, and reliable translation, editing, and proofreading services for documents written in English and Indonesian.
             </p>
 
             
           </div>
 
-          <div className="mx-auto w-full max-w-xl rounded-[2rem] border border-slate-200 bg-white p-7 shadow-xl">
-            <div className="rounded-[1.75rem] border border-slate-200 p-8">
-              <div className="border-t pt-8">
-                <h3 className="mb-6 text-4xl font-black">{mode === "signIn" ? "Sign in" : "Create Account"}</h3>
-                <form onSubmit={submit} className="space-y-5">
-                  <Field label="Email">
-                    <input
-                      className={inputClass()}
-                      type="email"
-                      value={email}
-                      onChange={(e)=>setEmail(e.target.value)}
-                      required
-                    />
-                  </Field>
+          <div className="mx-auto w-full max-w-[630px] rounded-[1.5rem] border border-slate-200 bg-white px-8 py-10 shadow-[0_18px_44px_rgba(15,23,42,0.08)] md:px-16 md:py-16">
+            <h3 className="text-4xl font-black text-black md:text-[42px]">{mode === "signIn" ? "Sign in" : "Create Account"}</h3>
+            <p className="mt-5 text-lg text-slate-500 md:text-xl">
+              {mode === "signIn" ? "Welcome back! Please sign in to your account." : "Create an account to access your finance dashboard."}
+            </p>
 
-                  <Field label="Password">
-                    <input
-                      className={inputClass()}
-                      type="password"
-                      value={password}
-                      minLength="6"
-                      onChange={(e)=>setPassword(e.target.value)}
-                      required
-                    />
-                  </Field>
+            <form onSubmit={submit} className="mt-12 space-y-8">
+              <label className="block">
+                <span className="mb-3 block text-lg font-medium text-black">Email</span>
+                <div className="flex h-16 items-center gap-4 rounded-xl border border-slate-200 bg-white px-5 shadow-sm transition focus-within:border-slate-400 focus-within:ring-4 focus-within:ring-slate-100">
+                  <svg aria-hidden="true" viewBox="0 0 24 24" className="h-6 w-6 flex-none text-slate-400" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="5" width="18" height="14" rx="2" />
+                    <path d="m3 7 9 6 9-6" />
+                  </svg>
+                  <input
+                    className="h-full min-w-0 flex-1 border-0 bg-transparent text-lg text-slate-900 outline-none placeholder:text-slate-400"
+                    type="email"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e)=>setEmail(e.target.value)}
+                    required
+                  />
+                </div>
+              </label>
 
-                  <AppButton type="submit" disabled={loading} className="w-full !rounded-full !py-4 !text-base">
-                    {loading ? "Working..." : mode === "signIn" ? "Sign in" : "Create Account"}
-                  </AppButton>
-                </form>
+              <label className="block">
+                <span className="mb-3 block text-lg font-medium text-black">Password</span>
+                <div className="flex h-16 items-center gap-4 rounded-xl border border-slate-200 bg-white px-5 shadow-sm transition focus-within:border-slate-400 focus-within:ring-4 focus-within:ring-slate-100">
+                  <svg aria-hidden="true" viewBox="0 0 24 24" className="h-6 w-6 flex-none text-slate-400" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="5" y="11" width="14" height="10" rx="2" />
+                    <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+                    <path d="M12 15v2" />
+                  </svg>
+                  <input
+                    className="h-full min-w-0 flex-1 border-0 bg-transparent text-lg text-slate-900 outline-none placeholder:text-slate-400"
+                    type="password"
+                    placeholder="••••••••"
+                    value={password}
+                    minLength="6"
+                    onChange={(e)=>setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+              </label>
 
-                <button
-                  onClick={()=>setMode(mode === "signIn" ? "signUp" : "signIn")}
-                  className="mt-6 text-base font-semibold underline text-slate-600"
-                >
-                  {mode === "signIn"
-                    ? "Need an account? Create one"
-                    : "Already have an account? Sign in"}
-                </button>
-              </div>
+              <AppButton type="submit" disabled={loading} className="h-[68px] w-full !rounded-[1.25rem] !py-0 !text-xl shadow-inner">
+                {loading ? "Working..." : mode === "signIn" ? "Sign in" : "Create Account"}
+              </AppButton>
+            </form>
+
+            <div className="mt-14 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xl">
+              <span className="text-slate-500">{mode === "signIn" ? "Don’t have an account?" : "Already have an account?"}</span>
+              <button
+                onClick={()=>setMode(mode === "signIn" ? "signUp" : "signIn")}
+                className="font-medium text-black"
+              >
+                {mode === "signIn" ? "Sign up" : "Sign in"}
+              </button>
             </div>
           </div>
         </section>

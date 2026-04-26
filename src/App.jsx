@@ -490,6 +490,10 @@ export default function CashflowTrackerTranslationAgency() {
   const monthlyData = useMemo(() => calculateMonthlyData(transactions), [transactions]);
   const categoryData = useMemo(() => calculateCategoryData(transactions), [transactions]);
 
+  function scrollToSection(id) {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
   if (!HAS_SUPABASE_CONFIG) return <SetupScreen />;
   if (!authReady) return <main className="flex min-h-screen items-center justify-center bg-slate-50 text-slate-600">Loading authentication...</main>;
   if (!session) return <AuthScreen onNotice={setNotice} />;
@@ -497,25 +501,31 @@ export default function CashflowTrackerTranslationAgency() {
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
       <div className="mx-auto max-w-7xl space-y-5 px-4 py-4 sm:px-6 md:space-y-6 md:px-8 md:py-6 lg:px-10">
-        <nav className="mx-auto flex min-h-16 max-w-6xl items-center justify-between gap-4 rounded-3xl border border-slate-200 bg-white px-4 py-3 shadow-sm sm:px-6 md:px-8">
+        <nav className="sticky top-3 z-20 mx-auto flex min-h-16 max-w-6xl flex-wrap items-center justify-between gap-3 rounded-3xl border border-slate-200 bg-white/95 px-4 py-3 shadow-sm backdrop-blur sm:px-6 md:px-8">
           <div className="text-2xl font-black tracking-tight sm:text-3xl">TranSaintika</div>
-          <div className="hidden gap-8 text-sm font-medium md:flex">
-            <span>Dashboard</span>
-            <span>Cashflow</span>
-            <span>Transactions</span>
+          <div className="order-3 flex w-full gap-2 overflow-x-auto rounded-full bg-slate-100 p-1 text-sm font-semibold sm:order-none sm:w-auto">
+            <button onClick={() => scrollToSection("dashboard-section")} className="flex-none rounded-full px-4 py-2 text-slate-700 transition hover:bg-white hover:text-slate-950 hover:shadow-sm">
+              Dashboard
+            </button>
+            <button onClick={() => scrollToSection("cashflow-section")} className="flex-none rounded-full px-4 py-2 text-slate-700 transition hover:bg-white hover:text-slate-950 hover:shadow-sm">
+              Cashflow
+            </button>
+            <button onClick={() => scrollToSection("transactions-section")} className="flex-none rounded-full px-4 py-2 text-slate-700 transition hover:bg-white hover:text-slate-950 hover:shadow-sm">
+              Transactions
+            </button>
           </div>
           <AppButton onClick={signOut} className="!px-5 !py-2.5">Sign out</AppButton>
         </nav>
 
-        <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6 md:p-8">
+        <section id="dashboard-section" className="scroll-mt-28 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6 md:p-8">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="min-w-0">
               <div className="mb-4 inline-flex max-w-full rounded-full border border-slate-200 bg-white px-4 py-2 text-xs text-slate-600 shadow-sm sm:text-sm">
                 Online finance workspace · Supabase secured
               </div>
-              <h1 className="max-w-4xl text-3xl font-black uppercase leading-tight tracking-[0.08em] text-slate-950 sm:text-4xl md:text-5xl lg:text-6xl">
-                TRANSAINTIKA
-                <span className="block text-slate-500">FINANCE DASHBOARD</span>
+              <h1 className="max-w-4xl text-3xl font-black leading-tight text-slate-950 sm:text-4xl md:text-5xl lg:text-6xl">
+                TranSaintika
+                <span className="block text-slate-500">Finance Dashboard</span>
               </h1>
               <p className="mt-4 max-w-2xl text-base leading-7 text-slate-500 sm:text-lg">
                 Track income, expenses, pending payments, and project cashflow for translation operations.
@@ -540,7 +550,7 @@ export default function CashflowTrackerTranslationAgency() {
           <StatCard label="Pending Amount" value={summary.pending} icon="…" />
         </section>
 
-        <section className="rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm">
+        <section id="cashflow-section" className="scroll-mt-28 rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm">
           <h2 className="text-2xl font-black tracking-tight">Cashflow Dashboard</h2>
           <p className="mb-4 text-sm text-slate-500">Net cashflow trend over time based on paid income and paid expenses.</p>
           <CashflowLineChart data={monthlyData} />
@@ -563,7 +573,7 @@ export default function CashflowTrackerTranslationAgency() {
           <div className="rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm lg:col-span-2"><h2 className="mb-5 text-2xl font-black tracking-tight">Monthly Overview</h2><SimpleBarChart data={monthlyData} /></div>
         </section>
 
-        <section className="space-y-6">
+        <section id="transactions-section" className="scroll-mt-28 space-y-6">
           <div className="rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm">
             <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <h2 className="text-2xl font-black tracking-tight">Transactions</h2>

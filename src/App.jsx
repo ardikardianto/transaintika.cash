@@ -195,10 +195,12 @@ function AuthScreen({ onNotice }) {
     e.preventDefault();
     setLoading(true);
     try {
-      const authCall = mode === "signUp" ? supabase.auth.signUp({ email, password }) : supabase.auth.signInWithPassword({ email, password });
+      const authCall = mode === "signUp"
+        ? supabase.auth.signUp({ email, password })
+        : supabase.auth.signInWithPassword({ email, password });
       const { error } = await authCall;
       if (error) throw error;
-      onNotice(mode === "signUp" ? "Account created. Check your email if confirmation is enabled." : "Signed in.");
+      onNotice(mode === "signUp" ? "Account created." : "Signed in.");
     } catch (error) {
       onNotice(error.message || "Authentication failed.");
     } finally {
@@ -207,24 +209,106 @@ function AuthScreen({ onNotice }) {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 p-4 text-slate-900 md:p-8">
-      <div className="mx-auto grid max-w-5xl gap-6 md:grid-cols-[1.1fr_0.9fr] md:items-center">
-        <section>
-          <div className="mb-3 text-3xl font-black uppercase leading-tight tracking-[0.18em] text-slate-900 md:text-5xl">
-            TranSaintika <span className="block text-slate-500 md:inline">Language Services</span>
+    <main className="min-h-screen bg-slate-50 text-slate-900">
+      <div className="mx-auto max-w-7xl px-6 py-10 md:px-10">
+        <nav className="mx-auto flex max-w-4xl items-center justify-between rounded-full border border-slate-200 bg-white px-8 py-4 shadow-sm">
+          <div className="text-3xl font-black tracking-tight">TranSaintika</div>
+          <div className="hidden gap-10 text-sm font-medium md:flex">
+            <span>Home</span>
+            <span>Services</span>
+            <span>Contact</span>
           </div>
-          <div className="text-xl font-semibold tracking-wide text-slate-600 md:text-2xl">Finance Dashboard</div>
-          <p className="mt-5 max-w-xl text-slate-600">Sign in before storing financial records. Data is saved online in Supabase and isolated by user account.</p>
-        </section>
+          <div className="rounded-full bg-black px-7 py-3 text-sm font-semibold text-white">WhatsApp</div>
+        </nav>
 
-        <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h1 className="text-2xl font-bold">{mode === "signIn" ? "Sign in" : "Create account"}</h1>
-          <form onSubmit={submit} className="mt-5 space-y-4">
-            <Field label="Email"><input className={inputClass()} type="email" value={email} onChange={(e) => setEmail(e.target.value)} required /></Field>
-            <Field label="Password"><input className={inputClass()} type="password" minLength="6" value={password} onChange={(e) => setPassword(e.target.value)} required /></Field>
-            <AppButton type="submit" disabled={loading} className="w-full">{loading ? "Working..." : mode === "signIn" ? "Sign in" : "Create account"}</AppButton>
-          </form>
-          <button className="mt-4 text-sm font-semibold text-slate-600 underline" onClick={() => setMode(mode === "signIn" ? "signUp" : "signIn")}>{mode === "signIn" ? "Need an account? Create one" : "Already have an account? Sign in"}</button>
+        <section className="grid min-h-[78vh] items-center gap-12 py-16 lg:grid-cols-2">
+          <div className="max-w-xl">
+            <div className="mb-8 inline-flex rounded-full border border-slate-200 bg-white px-5 py-3 text-sm text-slate-600 shadow-sm">
+              Malang, Indonesia · English & Indonesian
+            </div>
+
+            <h1 className="text-6xl font-black leading-[0.95] tracking-tight md:text-8xl">
+              TranSaintika
+              <span className="block">Language Services</span>
+            </h1>
+
+            <p className="mt-5 text-2xl text-slate-600 md:text-3xl">
+              Secure finance dashboard for translation operations.
+            </p>
+
+            <p className="mt-10 max-w-lg text-xl leading-relaxed text-slate-500">
+              Manage projects, cashflow, freelancer payments, and invoices in one protected workspace. Sign in to access your agency dashboard.
+            </p>
+
+            <div className="mt-10 flex flex-wrap gap-4">
+              <button className="rounded-full bg-black px-8 py-4 text-base font-semibold text-white shadow-sm">
+                Contact via WhatsApp →
+              </button>
+              <button className="rounded-full border border-slate-300 bg-white px-8 py-4 text-base font-semibold text-slate-800 shadow-sm">
+                View Services
+              </button>
+            </div>
+          </div>
+
+          <div className="mx-auto w-full max-w-xl rounded-[2rem] border border-slate-200 bg-white p-7 shadow-xl">
+            <div className="rounded-[1.75rem] border border-slate-200 p-8">
+              <div className="mb-6 flex items-start justify-between">
+                <div>
+                  <p className="text-sm text-slate-500">Starting from</p>
+                  <h2 className="text-5xl font-black tracking-tight">IDR 250</h2>
+                  <p className="text-xl text-slate-500">per word</p>
+                </div>
+                <div className="rounded-full bg-black px-6 py-3 text-sm font-semibold text-white">
+                  CLEAR RATES
+                </div>
+              </div>
+
+              <div className="mb-8 space-y-4 text-lg text-slate-700">
+                <div>✓ English ↔ Indonesian</div>
+                <div>✓ Translation, editing, proofreading</div>
+                <div>✓ Academic and professional documents</div>
+              </div>
+
+              <div className="border-t pt-8">
+                <h3 className="mb-6 text-4xl font-black">{mode === "signIn" ? "Sign in" : "Create Account"}</h3>
+                <form onSubmit={submit} className="space-y-5">
+                  <Field label="Email">
+                    <input
+                      className={inputClass()}
+                      type="email"
+                      value={email}
+                      onChange={(e)=>setEmail(e.target.value)}
+                      required
+                    />
+                  </Field>
+
+                  <Field label="Password">
+                    <input
+                      className={inputClass()}
+                      type="password"
+                      value={password}
+                      minLength="6"
+                      onChange={(e)=>setPassword(e.target.value)}
+                      required
+                    />
+                  </Field>
+
+                  <AppButton type="submit" disabled={loading} className="w-full !rounded-full !py-4 !text-base">
+                    {loading ? "Working..." : mode === "signIn" ? "Sign in" : "Create Account"}
+                  </AppButton>
+                </form>
+
+                <button
+                  onClick={()=>setMode(mode === "signIn" ? "signUp" : "signIn")}
+                  className="mt-6 text-base font-semibold underline text-slate-600"
+                >
+                  {mode === "signIn"
+                    ? "Need an account? Create one"
+                    : "Already have an account? Sign in"}
+                </button>
+              </div>
+            </div>
+          </div>
         </section>
       </div>
     </main>
@@ -422,7 +506,7 @@ export default function CashflowTrackerTranslationAgency() {
         <section className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
             <div className="mb-3 text-3xl font-black uppercase leading-tight tracking-[0.18em] text-slate-900 md:text-5xl">TranSaintika <span className="block text-slate-500 md:inline">Language Services</span></div>
-            <div className="text-xl font-semibold tracking-wide text-slate-600 md:text-2xl">Finance Dashboard</div>
+            <div className="text-xl font-semibold tracking-wide text-slate-600 md:text-2xl">Cashflow Tracker</div>
             <div className="mt-2 text-sm text-slate-500">Signed in as {session.user.email}</div>
           </div>
           <div className="flex flex-wrap gap-2">

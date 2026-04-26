@@ -191,6 +191,10 @@ function AuthScreen({ onNotice }) {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  function scrollToAuthSection(id) {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
   async function submit(e) {
     e.preventDefault();
     setLoading(true);
@@ -211,18 +215,20 @@ function AuthScreen({ onNotice }) {
   return (
     <main className="min-h-screen bg-white text-slate-950">
       <div className="px-4 py-4 sm:px-6 md:px-8">
-        <nav className="mx-auto flex min-h-16 w-full max-w-6xl items-center justify-between rounded-3xl border border-slate-100 bg-white px-4 shadow-[0_14px_40px_rgba(15,23,42,0.07)] sm:px-6 md:min-h-[72px] md:px-8">
+        <nav className="sticky top-3 z-20 mx-auto flex min-h-16 w-full max-w-6xl flex-wrap items-center justify-between gap-3 rounded-3xl border border-slate-100 bg-white/95 px-4 py-3 shadow-[0_14px_40px_rgba(15,23,42,0.07)] backdrop-blur sm:px-6 md:min-h-[72px] md:px-8">
           <div className="text-2xl font-black sm:text-3xl md:text-4xl">TranSaintika</div>
-          <div className="hidden text-base font-medium text-black md:block lg:text-lg">
-            <span>Finance Dashboard</span>
-          </div>
-          <div className="rounded-full bg-black px-5 py-2 text-sm font-bold text-white shadow-inner sm:px-7 sm:py-2.5 md:text-base">
-            Login
+          <div className="order-3 flex w-full gap-2 overflow-x-auto rounded-full bg-slate-100 p-1 text-sm font-semibold sm:order-none sm:w-auto">
+            <button onClick={() => scrollToAuthSection("login-intro")} className="flex-none rounded-full px-4 py-2 text-slate-700 transition hover:bg-white hover:text-slate-950 hover:shadow-sm">
+              Finance Dashboard
+            </button>
+            <button onClick={() => scrollToAuthSection("login-card")} className="flex-none rounded-full bg-black px-5 py-2 text-white shadow-inner transition hover:bg-slate-800">
+              Login
+            </button>
           </div>
         </nav>
 
         <section className="mx-auto grid min-h-[calc(100vh-96px)] max-w-6xl items-center gap-8 py-8 md:py-10 lg:grid-cols-[1fr_0.9fr] lg:gap-12">
-          <div className="max-w-2xl">
+          <div id="login-intro" className="max-w-2xl scroll-mt-28">
             <div className="mb-6 inline-flex rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 shadow-sm sm:text-base md:mb-8">
               Malang, Indonesia · English & Indonesian
             </div>
@@ -243,7 +249,7 @@ function AuthScreen({ onNotice }) {
             
           </div>
 
-          <div className="mx-auto w-full max-w-md rounded-3xl border border-slate-200 bg-white px-5 py-7 shadow-[0_16px_36px_rgba(15,23,42,0.08)] sm:px-7 md:max-w-lg md:px-10 md:py-10">
+          <div id="login-card" className="mx-auto w-full max-w-md scroll-mt-28 rounded-3xl border border-slate-200 bg-white px-5 py-7 shadow-[0_16px_36px_rgba(15,23,42,0.08)] sm:px-7 md:max-w-lg md:px-10 md:py-10">
             <h3 className="text-3xl font-black text-black md:text-4xl">{mode === "signIn" ? "Sign in" : "Create Account"}</h3>
             <p className="mt-3 text-sm leading-6 text-slate-500 sm:text-base">
               {mode === "signIn" ? "Welcome back! Please sign in to your account." : "Create an account to access your finance dashboard."}

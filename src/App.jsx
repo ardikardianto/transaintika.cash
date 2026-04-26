@@ -533,9 +533,8 @@ export default function CashflowTrackerTranslationAgency() {
               <p className="mt-3 break-words text-sm text-slate-500">Signed in as {session.user.email}</p>
             </div>
 
-            <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-3 lg:w-auto lg:flex lg:flex-wrap lg:justify-end">
+            <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2 lg:w-auto lg:flex lg:flex-wrap lg:justify-end">
               <AppButton onClick={exportJson} variant="outline" className="w-full lg:w-auto">Export JSON</AppButton>
-              <AppButton onClick={loadDemoData} variant="outline" className="w-full lg:w-auto" disabled={loading}>Load Demo Data</AppButton>
               <AppButton onClick={fetchTransactions} variant="outline" className="w-full lg:w-auto" disabled={loading}>Refresh</AppButton>
             </div>
           </div>

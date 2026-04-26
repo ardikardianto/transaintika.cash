@@ -213,7 +213,7 @@ function AuthScreen({ onNotice }) {
           <div className="mb-3 text-3xl font-black uppercase leading-tight tracking-[0.18em] text-slate-900 md:text-5xl">
             TranSaintika <span className="block text-slate-500 md:inline">Language Services</span>
           </div>
-          <div className="text-xl font-semibold tracking-wide text-slate-600 md:text-2xl">Cashflow Tracker</div>
+          <div className="text-xl font-semibold tracking-wide text-slate-600 md:text-2xl">Finance Dashboard</div>
           <p className="mt-5 max-w-xl text-slate-600">Sign in before storing financial records. Data is saved online in Supabase and isolated by user account.</p>
         </section>
 
@@ -422,7 +422,7 @@ export default function CashflowTrackerTranslationAgency() {
         <section className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
             <div className="mb-3 text-3xl font-black uppercase leading-tight tracking-[0.18em] text-slate-900 md:text-5xl">TranSaintika <span className="block text-slate-500 md:inline">Language Services</span></div>
-            <div className="text-xl font-semibold tracking-wide text-slate-600 md:text-2xl">Cashflow Tracker</div>
+            <div className="text-xl font-semibold tracking-wide text-slate-600 md:text-2xl">Finance Dashboard</div>
             <div className="mt-2 text-sm text-slate-500">Signed in as {session.user.email}</div>
           </div>
           <div className="flex flex-wrap gap-2">

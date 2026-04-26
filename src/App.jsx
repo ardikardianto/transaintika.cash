@@ -210,55 +210,55 @@ function AuthScreen({ onNotice }) {
 
   return (
     <main className="min-h-screen bg-white text-slate-950">
-      <div className="px-5 py-6 md:px-9">
-        <nav className="mx-auto flex min-h-[82px] w-full max-w-[1460px] items-center justify-between rounded-[2rem] border border-slate-100 bg-white px-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)] md:px-10">
-          <div className="text-3xl font-black md:text-[42px]">TranSaintika</div>
-          <div className="hidden text-xl font-medium text-black md:block">
+      <div className="px-4 py-4 sm:px-6 md:px-8">
+        <nav className="mx-auto flex min-h-16 w-full max-w-6xl items-center justify-between rounded-3xl border border-slate-100 bg-white px-4 shadow-[0_14px_40px_rgba(15,23,42,0.07)] sm:px-6 md:min-h-[72px] md:px-8">
+          <div className="text-2xl font-black sm:text-3xl md:text-4xl">TranSaintika</div>
+          <div className="hidden text-base font-medium text-black md:block lg:text-lg">
             <span>Finance Dashboard</span>
           </div>
-          <div className="rounded-full bg-black px-8 py-3 text-base font-bold text-white shadow-inner md:px-11 md:py-4 md:text-xl">
+          <div className="rounded-full bg-black px-5 py-2 text-sm font-bold text-white shadow-inner sm:px-7 sm:py-2.5 md:text-base">
             Login
           </div>
         </nav>
 
-        <section className="mx-auto grid min-h-[calc(100vh-132px)] max-w-[1400px] items-center gap-10 py-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
-          <div className="max-w-[700px]">
-            <div className="mb-12 inline-flex rounded-full border border-slate-200 bg-white px-5 py-2 text-base text-slate-700 shadow-sm md:text-xl">
+        <section className="mx-auto grid min-h-[calc(100vh-96px)] max-w-6xl items-center gap-8 py-8 md:py-10 lg:grid-cols-[1fr_0.9fr] lg:gap-12">
+          <div className="max-w-2xl">
+            <div className="mb-6 inline-flex rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 shadow-sm sm:text-base md:mb-8">
               Malang, Indonesia · English & Indonesian
             </div>
 
-            <h1 className="text-[56px] font-black leading-[1.02] text-black md:text-[78px] lg:text-[82px]">
+            <h1 className="text-[38px] font-black leading-[1.05] text-black sm:text-5xl md:text-6xl lg:text-[64px]">
               TranSaintika
               <span className="block">Language Services</span>
             </h1>
 
-            <p className="mt-7 text-2xl leading-relaxed text-slate-600 md:text-[26px]">
+            <p className="mt-5 text-lg leading-relaxed text-slate-600 sm:text-xl md:text-2xl">
               We can translate what hands can write.
             </p>
 
-            <p className="mt-10 max-w-[660px] text-xl leading-[1.85] text-slate-500 md:text-2xl">
+            <p className="mt-6 max-w-xl text-base leading-8 text-slate-500 sm:text-lg md:mt-8">
               Clean, accurate, and reliable translation, editing, and proofreading services for documents written in English and Indonesian.
             </p>
 
             
           </div>
 
-          <div className="mx-auto w-full max-w-[630px] rounded-[1.5rem] border border-slate-200 bg-white px-8 py-10 shadow-[0_18px_44px_rgba(15,23,42,0.08)] md:px-16 md:py-16">
-            <h3 className="text-4xl font-black text-black md:text-[42px]">{mode === "signIn" ? "Sign in" : "Create Account"}</h3>
-            <p className="mt-5 text-lg text-slate-500 md:text-xl">
+          <div className="mx-auto w-full max-w-md rounded-3xl border border-slate-200 bg-white px-5 py-7 shadow-[0_16px_36px_rgba(15,23,42,0.08)] sm:px-7 md:max-w-lg md:px-10 md:py-10">
+            <h3 className="text-3xl font-black text-black md:text-4xl">{mode === "signIn" ? "Sign in" : "Create Account"}</h3>
+            <p className="mt-3 text-sm leading-6 text-slate-500 sm:text-base">
               {mode === "signIn" ? "Welcome back! Please sign in to your account." : "Create an account to access your finance dashboard."}
             </p>
 
-            <form onSubmit={submit} className="mt-12 space-y-8">
+            <form onSubmit={submit} className="mt-7 space-y-5 md:mt-8 md:space-y-6">
               <label className="block">
-                <span className="mb-3 block text-lg font-medium text-black">Email</span>
-                <div className="flex h-16 items-center gap-4 rounded-xl border border-slate-200 bg-white px-5 shadow-sm transition focus-within:border-slate-400 focus-within:ring-4 focus-within:ring-slate-100">
-                  <svg aria-hidden="true" viewBox="0 0 24 24" className="h-6 w-6 flex-none text-slate-400" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <span className="mb-2 block text-sm font-medium text-black sm:text-base">Email</span>
+                <div className="flex h-12 items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 shadow-sm transition focus-within:border-slate-400 focus-within:ring-4 focus-within:ring-slate-100 sm:h-14">
+                  <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5 flex-none text-slate-400" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="3" y="5" width="18" height="14" rx="2" />
                     <path d="m3 7 9 6 9-6" />
                   </svg>
                   <input
-                    className="h-full min-w-0 flex-1 border-0 bg-transparent text-lg text-slate-900 outline-none placeholder:text-slate-400"
+                    className="h-full min-w-0 flex-1 border-0 bg-transparent text-base text-slate-900 outline-none placeholder:text-slate-400"
                     type="email"
                     placeholder="you@example.com"
                     value={email}
@@ -269,15 +269,15 @@ function AuthScreen({ onNotice }) {
               </label>
 
               <label className="block">
-                <span className="mb-3 block text-lg font-medium text-black">Password</span>
-                <div className="flex h-16 items-center gap-4 rounded-xl border border-slate-200 bg-white px-5 shadow-sm transition focus-within:border-slate-400 focus-within:ring-4 focus-within:ring-slate-100">
-                  <svg aria-hidden="true" viewBox="0 0 24 24" className="h-6 w-6 flex-none text-slate-400" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <span className="mb-2 block text-sm font-medium text-black sm:text-base">Password</span>
+                <div className="flex h-12 items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 shadow-sm transition focus-within:border-slate-400 focus-within:ring-4 focus-within:ring-slate-100 sm:h-14">
+                  <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5 flex-none text-slate-400" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="5" y="11" width="14" height="10" rx="2" />
                     <path d="M8 11V8a4 4 0 0 1 8 0v3" />
                     <path d="M12 15v2" />
                   </svg>
                   <input
-                    className="h-full min-w-0 flex-1 border-0 bg-transparent text-lg text-slate-900 outline-none placeholder:text-slate-400"
+                    className="h-full min-w-0 flex-1 border-0 bg-transparent text-base text-slate-900 outline-none placeholder:text-slate-400"
                     type="password"
                     placeholder="••••••••"
                     value={password}
@@ -288,12 +288,12 @@ function AuthScreen({ onNotice }) {
                 </div>
               </label>
 
-              <AppButton type="submit" disabled={loading} className="h-[68px] w-full !rounded-[1.25rem] !py-0 !text-xl shadow-inner">
+              <AppButton type="submit" disabled={loading} className="h-12 w-full !rounded-2xl !py-0 !text-base shadow-inner sm:h-14">
                 {loading ? "Working..." : mode === "signIn" ? "Sign in" : "Create Account"}
               </AppButton>
             </form>
 
-            <div className="mt-14 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xl">
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-sm sm:text-base md:mt-10">
               <span className="text-slate-500">{mode === "signIn" ? "Don’t have an account?" : "Already have an account?"}</span>
               <button
                 onClick={()=>setMode(mode === "signIn" ? "signUp" : "signIn")}

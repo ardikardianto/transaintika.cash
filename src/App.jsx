@@ -148,20 +148,20 @@ function Field({ label, children }) {
 }
 
 function AppButton({ children, onClick, type = "button", variant = "primary", className = "", disabled = false }) {
-  const base = "inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50";
-  const style = variant === "outline" ? "border border-slate-200 bg-white text-slate-700 hover:bg-slate-100" : "bg-slate-900 text-white hover:bg-slate-700";
+  const base = "inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50";
+  const style = variant === "outline" ? "border border-slate-200 bg-white text-slate-800 hover:bg-slate-100" : "bg-black text-white hover:bg-slate-800";
   return <button type={type} onClick={onClick} disabled={disabled} className={`${base} ${style} ${className}`}>{children}</button>;
 }
 
 function StatCard({ label, value, icon }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <p className="text-sm text-slate-500">{label}</p>
-          <p className="mt-1 text-xl font-bold text-slate-900">{rupiah.format(value)}</p>
+          <p className="text-sm font-medium text-slate-500">{label}</p>
+          <p className="mt-2 text-2xl font-black tracking-tight text-slate-950">{rupiah.format(value)}</p>
         </div>
-        <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-100 text-lg font-black text-slate-700">{icon}</div>
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-black text-lg font-black text-white">{icon}</div>
       </div>
     </div>
   );
@@ -501,19 +501,39 @@ export default function CashflowTrackerTranslationAgency() {
   if (!session) return <AuthScreen onNotice={setNotice} />;
 
   return (
-    <main className="min-h-screen bg-slate-50 p-4 text-slate-900 md:p-8">
-      <div className="mx-auto max-w-7xl space-y-6">
-        <section className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <div className="mb-3 text-3xl font-black uppercase leading-tight tracking-[0.18em] text-slate-900 md:text-5xl">TranSaintika <span className="block text-slate-500 md:inline">Language Services</span></div>
-            <div className="text-xl font-semibold tracking-wide text-slate-600 md:text-2xl">Cashflow Tracker</div>
-            <div className="mt-2 text-sm text-slate-500">Signed in as {session.user.email}</div>
+    <main className="min-h-screen bg-slate-50 text-slate-900">
+      <div className="mx-auto max-w-7xl space-y-8 px-6 py-10 md:px-10">
+        <nav className="mx-auto flex max-w-5xl items-center justify-between rounded-full border border-slate-200 bg-white px-8 py-4 shadow-sm">
+          <div className="text-3xl font-black tracking-tight">TranSaintika</div>
+          <div className="hidden gap-10 text-sm font-medium md:flex">
+            <span>Dashboard</span>
+            <span>Cashflow</span>
+            <span>Transactions</span>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <AppButton onClick={exportJson} variant="outline">Export JSON</AppButton>
-            <AppButton onClick={loadDemoData} variant="outline" disabled={loading}>Load Demo Data</AppButton>
-            <AppButton onClick={fetchTransactions} variant="outline" disabled={loading}>Refresh</AppButton>
-            <AppButton onClick={signOut} variant="outline">Sign out</AppButton>
+          <AppButton onClick={signOut}>Sign out</AppButton>
+        </nav>
+
+        <section className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm md:p-10">
+          <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <div className="mb-5 inline-flex rounded-full border border-slate-200 bg-white px-5 py-3 text-sm text-slate-600 shadow-sm">
+                Online finance workspace · Supabase secured
+              </div>
+              <h1 className="text-5xl font-black uppercase leading-[0.95] tracking-[0.18em] text-slate-950 md:text-7xl">
+                TranSaintika
+                <span className="block text-slate-500">Finance Dashboard</span>
+              </h1>
+              <p className="mt-6 max-w-2xl text-xl leading-relaxed text-slate-500">
+                Track income, expenses, pending payments, and project cashflow for translation operations.
+              </p>
+              <p className="mt-3 text-sm text-slate-500">Signed in as {session.user.email}</p>
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              <AppButton onClick={exportJson} variant="outline">Export JSON</AppButton>
+              <AppButton onClick={loadDemoData} variant="outline" disabled={loading}>Load Demo Data</AppButton>
+              <AppButton onClick={fetchTransactions} variant="outline" disabled={loading}>Refresh</AppButton>
+            </div>
           </div>
         </section>
 
@@ -526,15 +546,15 @@ export default function CashflowTrackerTranslationAgency() {
           <StatCard label="Pending Amount" value={summary.pending} icon="…" />
         </section>
 
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="text-lg font-semibold">Cashflow Dashboard</h2>
+        <section className="rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm">
+          <h2 className="text-2xl font-black tracking-tight">Cashflow Dashboard</h2>
           <p className="mb-4 text-sm text-slate-500">Net cashflow trend over time based on paid income and paid expenses.</p>
           <CashflowLineChart data={monthlyData} />
         </section>
 
         <section className="grid gap-6 lg:grid-cols-3">
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <h2 className="mb-4 text-lg font-semibold">Add Transaction</h2>
+          <div className="rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm">
+            <h2 className="mb-5 text-2xl font-black tracking-tight">Add Transaction</h2>
             <form onSubmit={addTransaction} className="space-y-3">
               <Field label="Date"><input className={inputClass()} type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} /></Field>
               <Field label="Type"><select className={inputClass()} value={form.type} onChange={(e) => handleTypeChange(e.target.value)}><option>Income</option><option>Expense</option></select></Field>
@@ -546,13 +566,13 @@ export default function CashflowTrackerTranslationAgency() {
               <AppButton type="submit" className="w-full" disabled={loading}>{loading ? "Saving..." : "Add Transaction"}</AppButton>
             </form>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm lg:col-span-2"><h2 className="mb-4 text-lg font-semibold">Monthly Overview</h2><SimpleBarChart data={monthlyData} /></div>
+          <div className="rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm lg:col-span-2"><h2 className="mb-5 text-2xl font-black tracking-tight">Monthly Overview</h2><SimpleBarChart data={monthlyData} /></div>
         </section>
 
         <section className="space-y-6">
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm">
             <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-              <h2 className="text-lg font-semibold">Transactions</h2>
+              <h2 className="text-2xl font-black tracking-tight">Transactions</h2>
               <div className="flex flex-col gap-2 md:flex-row">
                 <input className={inputClass()} placeholder="Search" value={query} onChange={(e) => setQuery(e.target.value)} />
                 <select className={inputClass()} value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}><option>All</option><option>Income</option><option>Expense</option></select>
@@ -570,7 +590,7 @@ export default function CashflowTrackerTranslationAgency() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><h2 className="mb-4 text-lg font-semibold">Category Breakdown</h2><CategoryBreakdown data={categoryData} /><p className="mt-5 text-sm text-slate-500">Data is stored online in Supabase and filtered by your authenticated user account.</p></div>
+          <div className="rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm"><h2 className="mb-5 text-2xl font-black tracking-tight">Category Breakdown</h2><CategoryBreakdown data={categoryData} /><p className="mt-5 text-sm text-slate-500">Data is stored online in Supabase and filtered by your authenticated user account.</p></div>
         </section>
       </div>
     </main>

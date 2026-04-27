@@ -26,23 +26,6 @@ const categories = {
   Expense: ["Freelancer Payment", "Software Subscription", "Marketing", "Office/Admin", "Tax", "Bank Fee", "Other Expense"],
 };
 
-const demoTransactions = [
-  ["2026-01-08", "Income", "Translation Project", "PT Nusantara Media", "Legal contract translation package", 6800000, "Paid"],
-  ["2026-01-15", "Expense", "Freelancer Payment", "Freelance Translator A", "Translator fee for legal contract project", 2300000, "Paid"],
-  ["2026-02-04", "Income", "Proofreading", "CV Global Edu", "Academic article proofreading package", 4200000, "Paid"],
-  ["2026-02-12", "Expense", "Software Subscription", "CAT Tool Subscription", "Monthly translation software subscription", 850000, "Paid"],
-  ["2026-02-20", "Expense", "Marketing", "Social Media Ads", "Campaign for sworn translation services", 1200000, "Paid"],
-  ["2026-03-03", "Income", "Interpreting", "International Webinar Organizer", "Consecutive interpreting service", 9500000, "Paid"],
-  ["2026-03-09", "Expense", "Freelancer Payment", "Interpreter Partner", "Interpreter partner fee", 3500000, "Paid"],
-  ["2026-03-19", "Income", "Subtitling", "Creative Studio ID", "Subtitle translation for training videos", 3800000, "Pending"],
-  ["2026-04-02", "Income", "Translation Project", "PT Global Health", "Medical brochure translation", 7200000, "Paid"],
-  ["2026-04-08", "Expense", "Freelancer Payment", "Freelance Translator B", "Medical translator fee", 2800000, "Paid"],
-  ["2026-04-17", "Expense", "Office/Admin", "Admin Operations", "Document handling and admin cost", 650000, "Paid"],
-  ["2026-05-05", "Income", "Consulting", "University Language Center", "Translation workflow consulting", 10500000, "Paid"],
-  ["2026-05-10", "Expense", "Tax", "Tax Provision", "Estimated monthly tax allocation", 1250000, "Paid"],
-  ["2026-05-18", "Income", "Translation Project", "Law Office Partner", "Sworn translation batch", 4800000, "Pending"],
-].map(([date, type, category, client, description, amount, status]) => ({ date, type, category, client, description, amount, status }));
-
 const rupiah = new Intl.NumberFormat("id-ID", {
   style: "currency",
   currency: "IDR",
@@ -570,22 +553,6 @@ export default function CashflowTrackerTranslationAgency() {
     }
   }
 
-  async function loadDemoData() {
-    if (!supabase || !session?.user) return;
-    setLoading(true);
-    try {
-      const rows = demoTransactions.map((item) => ({ ...item, user_id: session.user.id }));
-      const { data, error } = await supabase.from("transactions").insert(rows).select();
-      if (error) throw error;
-      setTransactions((prev) => [...(data || []).map(cleanTransaction), ...prev]);
-      setNotice("Demo data saved online.");
-    } catch (error) {
-      setNotice(error.message || "Failed to load demo data.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
   async function signOut() {
     if (!supabase) return;
     await supabase.auth.signOut();
@@ -642,13 +609,6 @@ export default function CashflowTrackerTranslationAgency() {
 
         <section id="dashboard-section" className="ts-hero-rise ts-hero-delay-1 relative overflow-hidden scroll-mt-28 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6 md:p-8">
           <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-slate-100 blur-3xl" aria-hidden="true" />
-          <div className="pointer-events-none absolute bottom-8 right-8 hidden w-56 rounded-3xl border border-slate-200 bg-white/80 p-4 shadow-[0_18px_40px_rgba(15,23,42,0.08)] backdrop-blur lg:block" aria-hidden="true">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Live margin</p>
-            <p className="mt-2 text-3xl font-black text-slate-950">64%</p>
-            <div className="mt-4 h-3 overflow-hidden rounded-full bg-slate-100">
-              <div className="ts-bar-grow h-full w-2/3 rounded-full bg-slate-950" />
-            </div>
-          </div>
           <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="min-w-0">
               <div className="ts-hero-rise ts-hero-delay-2 mb-4 inline-flex max-w-full rounded-full border border-slate-200 bg-white px-4 py-2 text-xs text-slate-600 shadow-sm sm:text-sm">
@@ -667,7 +627,6 @@ export default function CashflowTrackerTranslationAgency() {
             <div className="ts-hero-rise ts-hero-delay-4 grid w-full grid-cols-1 gap-3 sm:grid-cols-2 lg:w-auto lg:flex lg:flex-wrap lg:justify-end">
               <AppButton onClick={exportJson} variant="outline" className="w-full lg:w-auto">Export JSON</AppButton>
               <AppButton onClick={fetchTransactions} variant="outline" className="w-full lg:w-auto" disabled={loading}>Refresh</AppButton>
-              <AppButton onClick={loadDemoData} variant="outline" className="w-full lg:w-auto" disabled={loading}>Load Demo</AppButton>
             </div>
           </div>
         </section>

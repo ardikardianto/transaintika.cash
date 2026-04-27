@@ -308,7 +308,6 @@ function AuthScreen({ onNotice }) {
         </nav>
 
         <section className="relative mx-auto grid min-h-[calc(100vh-96px)] max-w-6xl items-center gap-8 overflow-hidden py-8 md:py-10 lg:grid-cols-[1fr_0.9fr] lg:gap-12">
-          <div className="pointer-events-none absolute inset-x-0 top-10 hidden h-72 rounded-full bg-slate-100 blur-3xl lg:block" aria-hidden="true" />
           <div className="pointer-events-none absolute inset-0 hidden lg:block" aria-hidden="true">
             <div className="ts-float-card absolute right-[41%] top-[13%] rounded-2xl border border-slate-200 bg-white/85 px-4 py-3 shadow-[0_18px_40px_rgba(15,23,42,0.09)] backdrop-blur" style={{ "--float-rotate": "-4deg", animationDelay: "340ms" }}>
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Cashflow</p>

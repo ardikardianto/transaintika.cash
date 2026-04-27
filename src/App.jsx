@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 
 function getRuntimeEnv() {
@@ -153,9 +153,105 @@ function AppButton({ children, onClick, type = "button", variant = "primary", cl
   return <button type={type} onClick={onClick} disabled={disabled} className={`${base} ${style} ${className}`}>{children}</button>;
 }
 
-function StatCard({ label, value, icon }) {
+function AppAnimationStyles() {
   return (
-    <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+    <style>{`
+      @keyframes ts-nav-enter {
+        from { opacity: 0; transform: translateY(-18px) scale(0.98); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+      }
+
+      @keyframes ts-hero-rise {
+        from { opacity: 0; transform: translateY(30px); filter: blur(10px); }
+        to { opacity: 1; transform: translateY(0); filter: blur(0); }
+      }
+
+      @keyframes ts-card-float {
+        0%, 100% { transform: translateY(0) rotate(var(--float-rotate, 0deg)); }
+        50% { transform: translateY(-14px) rotate(calc(var(--float-rotate, 0deg) * -1)); }
+      }
+
+      @keyframes ts-bar-grow {
+        from { transform: scaleX(0); }
+        to { transform: scaleX(1); }
+      }
+
+      .ts-nav-enter {
+        animation: ts-nav-enter 720ms cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
+
+      .ts-hero-rise {
+        animation: ts-hero-rise 820ms cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
+
+      .ts-hero-delay-1 { animation-delay: 120ms; }
+      .ts-hero-delay-2 { animation-delay: 240ms; }
+      .ts-hero-delay-3 { animation-delay: 380ms; }
+      .ts-hero-delay-4 { animation-delay: 520ms; }
+
+      .ts-float-card {
+        animation: ts-hero-rise 760ms cubic-bezier(0.22, 1, 0.36, 1) both, ts-card-float 4.8s ease-in-out 900ms infinite;
+      }
+
+      .ts-bar-grow {
+        animation: ts-bar-grow 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+        transform-origin: left center;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .ts-nav-enter,
+        .ts-hero-rise,
+        .ts-float-card,
+        .ts-bar-grow {
+          animation-duration: 1ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 1ms !important;
+        }
+      }
+    `}</style>
+  );
+}
+
+function ScrollReveal({ children, className = "", delay = 0, id, as: Tag = "div" }) {
+  const ref = useRef(null);
+  const [isVisible, setIsVisible] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches || !("IntersectionObserver" in window);
+  });
+
+  useEffect(() => {
+    const node = ref.current;
+    if (!node || isVisible) return undefined;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      { rootMargin: "0px 0px -12% 0px", threshold: 0.16 },
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [isVisible]);
+
+  return (
+    <Tag
+      id={id}
+      ref={ref}
+      className={`${className} transition-all duration-700 ease-out ${isVisible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"}`}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      {children}
+    </Tag>
+  );
+}
+
+function StatCard({ label, value, icon, className = "" }) {
+  return (
+    <div className={`rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6 ${className}`}>
       <div className="flex items-center justify-between gap-4">
         <div className="min-w-0">
           <p className="text-sm font-medium text-slate-500">{label}</p>
@@ -214,8 +310,9 @@ function AuthScreen({ onNotice }) {
 
   return (
     <main className="min-h-screen bg-white text-slate-950">
+      <AppAnimationStyles />
       <div className="px-4 py-4 sm:px-6 md:px-8">
-        <nav className="sticky top-3 z-20 mx-auto flex min-h-16 w-full max-w-6xl flex-wrap items-center justify-between gap-3 rounded-3xl border border-slate-100 bg-white/95 px-4 py-3 shadow-[0_14px_40px_rgba(15,23,42,0.07)] backdrop-blur sm:px-6 md:min-h-[72px] md:px-8">
+        <nav className="ts-nav-enter sticky top-3 z-20 mx-auto flex min-h-16 w-full max-w-6xl flex-wrap items-center justify-between gap-3 rounded-3xl border border-slate-100 bg-white/95 px-4 py-3 shadow-[0_14px_40px_rgba(15,23,42,0.07)] backdrop-blur sm:px-6 md:min-h-[72px] md:px-8">
           <div className="text-2xl font-black sm:text-3xl md:text-4xl">TranSaintika</div>
           <div className="order-3 flex w-full gap-2 overflow-x-auto rounded-full bg-slate-100 p-1 text-sm font-semibold sm:order-none sm:w-auto">
             <button onClick={() => scrollToAuthSection("login-intro")} className="flex-none rounded-full px-4 py-2 text-slate-700 transition hover:bg-white hover:text-slate-950 hover:shadow-sm">
@@ -227,29 +324,41 @@ function AuthScreen({ onNotice }) {
           </div>
         </nav>
 
-        <section className="mx-auto grid min-h-[calc(100vh-96px)] max-w-6xl items-center gap-8 py-8 md:py-10 lg:grid-cols-[1fr_0.9fr] lg:gap-12">
+        <section className="relative mx-auto grid min-h-[calc(100vh-96px)] max-w-6xl items-center gap-8 overflow-hidden py-8 md:py-10 lg:grid-cols-[1fr_0.9fr] lg:gap-12">
+          <div className="pointer-events-none absolute inset-x-0 top-10 hidden h-72 rounded-full bg-slate-100 blur-3xl lg:block" aria-hidden="true" />
+          <div className="pointer-events-none absolute inset-0 hidden lg:block" aria-hidden="true">
+            <div className="ts-float-card absolute right-[41%] top-[13%] rounded-2xl border border-slate-200 bg-white/85 px-4 py-3 shadow-[0_18px_40px_rgba(15,23,42,0.09)] backdrop-blur" style={{ "--float-rotate": "-4deg", animationDelay: "340ms" }}>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Cashflow</p>
+              <p className="mt-1 text-lg font-black text-slate-950">+ IDR 18.5M</p>
+            </div>
+            <div className="ts-float-card absolute bottom-[19%] left-[44%] rounded-2xl border border-slate-200 bg-white/85 px-4 py-3 shadow-[0_18px_40px_rgba(15,23,42,0.09)] backdrop-blur" style={{ "--float-rotate": "5deg", animationDelay: "520ms" }}>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Pending</p>
+              <p className="mt-1 text-lg font-black text-slate-950">4 invoices</p>
+            </div>
+          </div>
+
           <div id="login-intro" className="max-w-2xl scroll-mt-28">
-            <div className="mb-6 inline-flex rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 shadow-sm sm:text-base md:mb-8">
+            <div className="ts-hero-rise ts-hero-delay-1 mb-6 inline-flex rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 shadow-sm sm:text-base md:mb-8">
               Malang, Indonesia · English & Indonesian
             </div>
 
-            <h1 className="text-[38px] font-black leading-[1.05] text-black sm:text-5xl md:text-6xl lg:text-[64px]">
+            <h1 className="ts-hero-rise ts-hero-delay-2 text-[38px] font-black leading-[1.05] text-black sm:text-5xl md:text-6xl lg:text-[64px]">
               TranSaintika
               <span className="block">Language Services</span>
             </h1>
 
-            <p className="mt-5 text-lg leading-relaxed text-slate-600 sm:text-xl md:text-2xl">
+            <p className="ts-hero-rise ts-hero-delay-3 mt-5 text-lg leading-relaxed text-slate-600 sm:text-xl md:text-2xl">
               We can translate what hands can write.
             </p>
 
-            <p className="mt-6 max-w-xl text-base leading-8 text-slate-500 sm:text-lg md:mt-8">
+            <p className="ts-hero-rise ts-hero-delay-4 mt-6 max-w-xl text-base leading-8 text-slate-500 sm:text-lg md:mt-8">
               Clean, accurate, and reliable translation, editing, and proofreading services for documents written in English and Indonesian.
             </p>
 
             
           </div>
 
-          <div id="login-card" className="mx-auto w-full max-w-md scroll-mt-28 rounded-3xl border border-slate-200 bg-white px-5 py-7 shadow-[0_16px_36px_rgba(15,23,42,0.08)] sm:px-7 md:max-w-lg md:px-10 md:py-10">
+          <div id="login-card" className="ts-hero-rise ts-hero-delay-3 mx-auto w-full max-w-md scroll-mt-28 rounded-3xl border border-slate-200 bg-white px-5 py-7 shadow-[0_16px_36px_rgba(15,23,42,0.08)] sm:px-7 md:max-w-lg md:px-10 md:py-10">
             <h3 className="text-3xl font-black text-black md:text-4xl">{mode === "signIn" ? "Sign in" : "Create Account"}</h3>
             <p className="mt-3 text-sm leading-6 text-slate-500 sm:text-base">
               {mode === "signIn" ? "Welcome back! Please sign in to your account." : "Create an account to access your finance dashboard."}
@@ -379,6 +488,7 @@ export default function CashflowTrackerTranslationAgency() {
   const [statusFilter, setStatusFilter] = useState("All");
   const [notice, setNotice] = useState("");
   const [loading, setLoading] = useState(false);
+  const sessionUserId = session?.user?.id;
 
   useEffect(() => {
     if (!supabase) return;
@@ -398,12 +508,7 @@ export default function CashflowTrackerTranslationAgency() {
     };
   }, []);
 
-  useEffect(() => {
-    if (session?.user) fetchTransactions();
-    if (!session?.user) setTransactions([]);
-  }, [session?.user?.id]);
-
-  async function fetchTransactions() {
+  const fetchTransactions = useCallback(async function fetchTransactions() {
     if (!supabase) return;
     setLoading(true);
     try {
@@ -415,7 +520,18 @@ export default function CashflowTrackerTranslationAgency() {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      if (sessionUserId) {
+        fetchTransactions();
+      } else {
+        setTransactions([]);
+      }
+    }, 0);
+    return () => window.clearTimeout(timeout);
+  }, [fetchTransactions, sessionUserId]);
 
   async function addTransaction(e) {
     e.preventDefault();
@@ -506,8 +622,9 @@ export default function CashflowTrackerTranslationAgency() {
 
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
+      <AppAnimationStyles />
       <div className="mx-auto max-w-7xl space-y-5 px-4 py-4 sm:px-6 md:space-y-6 md:px-8 md:py-6 lg:px-10">
-        <nav className="sticky top-3 z-20 mx-auto flex min-h-16 max-w-6xl flex-wrap items-center justify-between gap-3 rounded-3xl border border-slate-200 bg-white/95 px-4 py-3 shadow-sm backdrop-blur sm:px-6 md:px-8">
+        <nav className="ts-nav-enter sticky top-3 z-20 mx-auto flex min-h-16 max-w-6xl flex-wrap items-center justify-between gap-3 rounded-3xl border border-slate-200 bg-white/95 px-4 py-3 shadow-sm backdrop-blur sm:px-6 md:px-8">
           <div className="text-2xl font-black tracking-tight sm:text-3xl">TranSaintika</div>
           <div className="order-3 flex w-full gap-2 overflow-x-auto rounded-full bg-slate-100 p-1 text-sm font-semibold sm:order-none sm:w-auto">
             <button onClick={() => scrollToSection("dashboard-section")} className="flex-none rounded-full px-4 py-2 text-slate-700 transition hover:bg-white hover:text-slate-950 hover:shadow-sm">
@@ -523,45 +640,54 @@ export default function CashflowTrackerTranslationAgency() {
           <AppButton onClick={signOut} className="!px-5 !py-2.5">Sign out</AppButton>
         </nav>
 
-        <section id="dashboard-section" className="scroll-mt-28 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6 md:p-8">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <section id="dashboard-section" className="ts-hero-rise ts-hero-delay-1 relative overflow-hidden scroll-mt-28 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6 md:p-8">
+          <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-slate-100 blur-3xl" aria-hidden="true" />
+          <div className="pointer-events-none absolute bottom-8 right-8 hidden w-56 rounded-3xl border border-slate-200 bg-white/80 p-4 shadow-[0_18px_40px_rgba(15,23,42,0.08)] backdrop-blur lg:block" aria-hidden="true">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Live margin</p>
+            <p className="mt-2 text-3xl font-black text-slate-950">64%</p>
+            <div className="mt-4 h-3 overflow-hidden rounded-full bg-slate-100">
+              <div className="ts-bar-grow h-full w-2/3 rounded-full bg-slate-950" />
+            </div>
+          </div>
+          <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="min-w-0">
-              <div className="mb-4 inline-flex max-w-full rounded-full border border-slate-200 bg-white px-4 py-2 text-xs text-slate-600 shadow-sm sm:text-sm">
+              <div className="ts-hero-rise ts-hero-delay-2 mb-4 inline-flex max-w-full rounded-full border border-slate-200 bg-white px-4 py-2 text-xs text-slate-600 shadow-sm sm:text-sm">
                 Online finance workspace · Supabase secured
               </div>
-              <h1 className="max-w-4xl text-3xl font-black leading-tight text-slate-950 sm:text-4xl md:text-5xl lg:text-6xl">
+              <h1 className="ts-hero-rise ts-hero-delay-3 max-w-4xl text-3xl font-black leading-tight text-slate-950 sm:text-4xl md:text-5xl lg:text-6xl">
                 TranSaintika
                 <span className="block text-slate-500">Finance Dashboard</span>
               </h1>
-              <p className="mt-4 max-w-2xl text-base leading-7 text-slate-500 sm:text-lg">
+              <p className="ts-hero-rise ts-hero-delay-4 mt-4 max-w-2xl text-base leading-7 text-slate-500 sm:text-lg">
                 Track income, expenses, pending payments, and project cashflow for translation operations.
               </p>
-              <p className="mt-3 break-words text-sm text-slate-500">Signed in as {session.user.email}</p>
+              <p className="ts-hero-rise ts-hero-delay-4 mt-3 break-words text-sm text-slate-500">Signed in as {session.user.email}</p>
             </div>
 
-            <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2 lg:w-auto lg:flex lg:flex-wrap lg:justify-end">
+            <div className="ts-hero-rise ts-hero-delay-4 grid w-full grid-cols-1 gap-3 sm:grid-cols-2 lg:w-auto lg:flex lg:flex-wrap lg:justify-end">
               <AppButton onClick={exportJson} variant="outline" className="w-full lg:w-auto">Export JSON</AppButton>
               <AppButton onClick={fetchTransactions} variant="outline" className="w-full lg:w-auto" disabled={loading}>Refresh</AppButton>
+              <AppButton onClick={loadDemoData} variant="outline" className="w-full lg:w-auto" disabled={loading}>Load Demo</AppButton>
             </div>
           </div>
         </section>
 
-        {notice && <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 shadow-sm">{notice}</div>}
+        {notice && <ScrollReveal className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 shadow-sm">{notice}</ScrollReveal>}
 
-        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <StatCard label="Paid Income" value={summary.paidIncome} icon="↗" />
-          <StatCard label="Paid Expenses" value={summary.paidExpenses} icon="↘" />
-          <StatCard label="Net Cashflow" value={summary.net} icon="◼" />
-          <StatCard label="Pending Amount" value={summary.pending} icon="…" />
-        </section>
+        <ScrollReveal as="section" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" delay={80}>
+          <StatCard label="Paid Income" value={summary.paidIncome} icon="↗" className="transition hover:-translate-y-1 hover:shadow-md" />
+          <StatCard label="Paid Expenses" value={summary.paidExpenses} icon="↘" className="transition hover:-translate-y-1 hover:shadow-md" />
+          <StatCard label="Net Cashflow" value={summary.net} icon="◼" className="transition hover:-translate-y-1 hover:shadow-md" />
+          <StatCard label="Pending Amount" value={summary.pending} icon="…" className="transition hover:-translate-y-1 hover:shadow-md" />
+        </ScrollReveal>
 
-        <section id="cashflow-section" className="scroll-mt-28 rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm">
+        <ScrollReveal as="section" id="cashflow-section" className="scroll-mt-28 rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm" delay={120}>
           <h2 className="text-2xl font-black tracking-tight">Cashflow Dashboard</h2>
           <p className="mb-4 text-sm text-slate-500">Net cashflow trend over time based on paid income and paid expenses.</p>
           <CashflowLineChart data={monthlyData} />
-        </section>
+        </ScrollReveal>
 
-        <section className="grid gap-6 lg:grid-cols-3">
+        <ScrollReveal as="section" className="grid gap-6 lg:grid-cols-3" delay={160}>
           <div className="rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm">
             <h2 className="mb-5 text-2xl font-black tracking-tight">Add Transaction</h2>
             <form onSubmit={addTransaction} className="space-y-3">
@@ -576,9 +702,9 @@ export default function CashflowTrackerTranslationAgency() {
             </form>
           </div>
           <div className="rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm lg:col-span-2"><h2 className="mb-5 text-2xl font-black tracking-tight">Monthly Overview</h2><SimpleBarChart data={monthlyData} /></div>
-        </section>
+        </ScrollReveal>
 
-        <section id="transactions-section" className="scroll-mt-28 space-y-6">
+        <ScrollReveal as="section" id="transactions-section" className="scroll-mt-28 space-y-6" delay={180}>
           <div className="rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm">
             <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <h2 className="text-2xl font-black tracking-tight">Transactions</h2>
@@ -600,7 +726,7 @@ export default function CashflowTrackerTranslationAgency() {
           </div>
 
           <div className="rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm"><h2 className="mb-5 text-2xl font-black tracking-tight">Category Breakdown</h2><CategoryBreakdown data={categoryData} /><p className="mt-5 text-sm text-slate-500">Data is stored online in Supabase and filtered by your authenticated user account.</p></div>
-        </section>
+        </ScrollReveal>
       </div>
     </main>
   );

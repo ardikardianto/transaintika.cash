@@ -276,27 +276,7 @@ function MobileBottomNav({ onNavigate }) {
   );
 }
 
-function MiniTrend({ data }) {
-  const fallback = "M 0 54 C 22 18 42 18 64 42 S 106 70 128 34 S 172 18 196 48";
-  const points = data.map((item) => Number(item.Income || 0) - Number(item.Expense || 0));
-
-  if (points.length < 2) {
-    return <path d={fallback} fill="none" stroke="currentColor" strokeWidth="7" strokeLinecap="round" />;
-  }
-
-  const min = Math.min(...points);
-  const max = Math.max(...points);
-  const range = max - min || 1;
-  const coordinates = points.map((value, index) => ({
-    x: (index / (points.length - 1)) * 196,
-    y: 64 - ((value - min) / range) * 52,
-  }));
-  const path = coordinates.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`).join(" ");
-
-  return <path d={path} fill="none" stroke="currentColor" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />;
-}
-
-function MobileSummaryCard({ summary, monthlyData, transactionCount, email }) {
+function MobileSummaryCard({ summary, transactionCount, email }) {
   const netIsPositive = summary.net >= 0;
 
   return (
@@ -310,14 +290,10 @@ function MobileSummaryCard({ summary, monthlyData, transactionCount, email }) {
           <span className="rounded-full bg-white/70 px-3 py-1 text-xs font-black">{netIsPositive ? "+" : "-"} Net</span>
         </div>
 
-        <div className="mt-6">
+        <div className="mt-10 pb-8">
           <p className="text-xs font-semibold text-slate-600">Net Cashflow</p>
           <p className="mt-1 break-words text-[2rem] font-black leading-none tracking-tight">{rupiah.format(summary.net)}</p>
         </div>
-
-        <svg viewBox="0 0 196 72" className="mt-4 h-16 w-full text-slate-950/55" aria-hidden="true">
-          <MiniTrend data={monthlyData} />
-        </svg>
       </div>
 
       <div className="mt-4 grid grid-cols-3 gap-2 text-center">
@@ -547,27 +523,46 @@ function SimpleBarChart({ data }) {
   );
 }
 
-function CashflowLineChart({ data }) {
-  const points = data.map((item) => ({ month: item.month, net: Number(item.Income || 0) - Number(item.Expense || 0) }));
-  if (points.length === 0) return <div className="flex h-72 items-center justify-center rounded-xl bg-slate-50 text-sm text-slate-500">No cashflow data yet.</div>;
-  if (points.length === 1) return <div className="flex h-72 flex-col items-center justify-center rounded-xl bg-slate-50 text-center"><div className="text-sm text-slate-500">Net cashflow for {points[0].month}</div><div className="mt-2 text-3xl font-black text-slate-900">{rupiah.format(points[0].net)}</div></div>;
+function CashflowBarChart({ data }) {
+  const bars = data.map((item) => ({
+    month: item.month,
+    net: Number(item.Income || 0) - Number(item.Expense || 0),
+  }));
+  const maxAbs = Math.max(1, ...bars.map((item) => Math.abs(item.net)));
 
-  const width = 800, height = 280, padding = 42;
-  const minNet = Math.min(...points.map((p) => p.net), 0);
-  const maxNet = Math.max(...points.map((p) => p.net), 0);
-  const range = maxNet - minNet || 1;
-  const coordinates = points.map((point, index) => ({ ...point, x: padding + (index / (points.length - 1)) * (width - padding * 2), y: height - padding - ((point.net - minNet) / range) * (height - padding * 2) }));
-  const path = coordinates.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`).join(" ");
-  const zeroY = height - padding - ((0 - minNet) / range) * (height - padding * 2);
+  if (bars.length === 0) {
+    return <div className="flex h-72 items-center justify-center rounded-xl bg-slate-50 text-sm text-slate-500">No cashflow data yet.</div>;
+  }
 
   return (
     <div className="rounded-xl bg-slate-50 p-4">
-      <svg viewBox={`0 0 ${width} ${height}`} className="h-72 w-full overflow-visible">
-        <line x1={padding} y1={zeroY} x2={width - padding} y2={zeroY} className="stroke-slate-300" strokeWidth="2" strokeDasharray="6 6" />
-        <path d={path} fill="none" className="stroke-slate-900" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-        {coordinates.map((point) => <g key={point.month}><circle cx={point.x} cy={point.y} r="6" className="fill-white stroke-slate-900" strokeWidth="3" /><text x={point.x} y={height - 12} textAnchor="middle" className="fill-slate-500 text-[18px] font-semibold">{point.month.slice(5)}</text><text x={point.x} y={point.y - 14} textAnchor="middle" className="fill-slate-700 text-[16px] font-bold">{rupiah.format(point.net).replace("Rp", "")}</text></g>)}
-      </svg>
-      <div className="mt-2 text-xs text-slate-500">Net cashflow = paid income minus paid expenses</div>
+      <div className="flex min-h-72 items-end gap-3 overflow-x-auto pb-2 pt-6 sm:gap-4">
+        {bars.map((item) => {
+          const height = Math.max(12, (Math.abs(item.net) / maxAbs) * 180);
+          const isPositive = item.net >= 0;
+
+          return (
+            <div key={item.month} className="flex min-w-20 flex-1 flex-col items-center justify-end gap-2">
+              <div className="text-center text-[11px] font-black leading-4 text-slate-700 sm:text-xs">
+                {rupiah.format(item.net).replace("Rp", "Rp ")}
+              </div>
+              <div className="flex h-48 w-full items-end justify-center rounded-2xl bg-white px-2 py-3 shadow-sm">
+                <div
+                  className={`w-full max-w-12 rounded-t-2xl ${isPositive ? "bg-slate-950" : "bg-rose-400"}`}
+                  style={{ height: `${height}px` }}
+                  aria-label={`${item.month} net cashflow ${rupiah.format(item.net)}`}
+                  role="img"
+                />
+              </div>
+              <div className="text-xs font-bold text-slate-500">{item.month.slice(5)}</div>
+            </div>
+          );
+        })}
+      </div>
+      <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-slate-500">
+        <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-slate-950" />Positive net</span>
+        <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-rose-400" />Negative net</span>
+      </div>
     </div>
   );
 }
@@ -727,7 +722,7 @@ export default function CashflowTrackerTranslationAgency() {
           <AppButton onClick={signOut} className="!px-4 !py-2.5 text-xs sm:!px-5 sm:text-sm">Sign out</AppButton>
         </nav>
 
-        <MobileSummaryCard summary={summary} monthlyData={monthlyData} transactionCount={transactions.length} email={session.user.email} />
+        <MobileSummaryCard summary={summary} transactionCount={transactions.length} email={session.user.email} />
 
         <section id="dashboard-section" className="ts-hero-rise ts-hero-delay-1 relative hidden overflow-hidden scroll-mt-28 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6 md:block md:p-8">
           <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-slate-100 blur-3xl" aria-hidden="true" />
@@ -765,7 +760,7 @@ export default function CashflowTrackerTranslationAgency() {
         <ScrollReveal as="section" id="cashflow-section" className="scroll-mt-28 rounded-[1.75rem] border border-slate-200 bg-white p-4 shadow-sm sm:p-7" delay={120}>
           <h2 className="text-xl font-black tracking-tight sm:text-2xl">Cashflow Dashboard</h2>
           <p className="mb-4 text-sm leading-6 text-slate-500">Net cashflow trend over time based on paid income and paid expenses.</p>
-          <CashflowLineChart data={monthlyData} />
+          <CashflowBarChart data={monthlyData} />
         </ScrollReveal>
 
         <ScrollReveal as="section" id="add-transaction-section" className="grid scroll-mt-28 gap-4 lg:grid-cols-3 lg:gap-6" delay={160}>

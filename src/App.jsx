@@ -259,7 +259,7 @@ function MobileBottomNav({ onNavigate }) {
   ];
 
   return (
-    <nav className="fixed bottom-5 left-1/2 z-30 w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 rounded-full border border-white/10 bg-slate-950/95 p-2 text-white shadow-[0_22px_55px_rgba(15,23,42,0.38)] backdrop-blur md:hidden" aria-label="Mobile navigation">
+    <nav className="fixed left-1/2 z-30 w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 rounded-full border border-white/10 bg-slate-950/95 p-2 text-white shadow-[0_22px_55px_rgba(15,23,42,0.38)] backdrop-blur md:hidden" style={{ bottom: "calc(env(safe-area-inset-bottom) + 1.25rem + var(--mobile-nav-raise, 0px))" }} aria-label="Mobile navigation">
       <div className="grid grid-cols-4 gap-1">
         {items.map((item) => (
           <button
@@ -627,6 +627,26 @@ export default function CashflowTrackerTranslationAgency() {
     }, 0);
     return () => window.clearTimeout(timeout);
   }, [fetchTransactions, sessionUserId]);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.visualViewport) return undefined;
+
+    function syncMobileNavOffset() {
+      const viewport = window.visualViewport;
+      const coveredBottom = Math.max(0, window.innerHeight - viewport.height - viewport.offsetTop);
+      document.documentElement.style.setProperty("--mobile-nav-raise", `${coveredBottom}px`);
+    }
+
+    syncMobileNavOffset();
+    window.visualViewport.addEventListener("resize", syncMobileNavOffset);
+    window.visualViewport.addEventListener("scroll", syncMobileNavOffset);
+
+    return () => {
+      window.visualViewport.removeEventListener("resize", syncMobileNavOffset);
+      window.visualViewport.removeEventListener("scroll", syncMobileNavOffset);
+      document.documentElement.style.removeProperty("--mobile-nav-raise");
+    };
+  }, []);
 
   async function addTransaction(e) {
     e.preventDefault();

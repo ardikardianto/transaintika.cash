@@ -259,7 +259,7 @@ function MobileBottomNav({ onNavigate }) {
   ];
 
   return (
-    <nav className="fixed inset-x-4 bottom-4 z-30 rounded-full bg-slate-950/95 p-2 text-white shadow-[0_18px_40px_rgba(15,23,42,0.28)] backdrop-blur md:hidden" aria-label="Mobile navigation">
+    <nav className="fixed bottom-5 left-1/2 z-30 w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 rounded-full border border-white/10 bg-slate-950/95 p-2 text-white shadow-[0_22px_55px_rgba(15,23,42,0.38)] backdrop-blur md:hidden" aria-label="Mobile navigation">
       <div className="grid grid-cols-4 gap-1">
         {items.map((item) => (
           <button

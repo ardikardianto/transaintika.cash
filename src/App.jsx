@@ -234,15 +234,133 @@ function ScrollReveal({ children, className = "", delay = 0, id, as: Tag = "div"
 
 function StatCard({ label, value, icon, className = "" }) {
   return (
-    <div className={`rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6 ${className}`}>
+    <div className={`rounded-[1.75rem] border border-slate-200 bg-white p-4 shadow-sm sm:p-6 ${className}`}>
       <div className="flex items-center justify-between gap-4">
         <div className="min-w-0">
-          <p className="text-sm font-medium text-slate-500">{label}</p>
-          <p className="mt-2 break-words text-xl font-black tracking-tight text-slate-950 sm:text-2xl">{rupiah.format(value)}</p>
+          <p className="text-xs font-semibold text-slate-500 sm:text-sm">{label}</p>
+          <p className="mt-2 break-words text-lg font-black tracking-tight text-slate-950 sm:text-2xl">{rupiah.format(value)}</p>
         </div>
         <div className="flex h-10 w-10 flex-none items-center justify-center rounded-full bg-black text-base font-black text-white sm:h-11 sm:w-11">{icon}</div>
       </div>
     </div>
+  );
+}
+
+function MobileIcon({ children }) {
+  return <span className="flex h-6 w-6 items-center justify-center text-[15px] leading-none">{children}</span>;
+}
+
+function MobileBottomNav({ onNavigate }) {
+  const items = [
+    { label: "Home", target: "mobile-dashboard-section", icon: "●" },
+    { label: "Cashflow", target: "cashflow-section", icon: "▰" },
+    { label: "Add", target: "add-transaction-section", icon: "+" },
+    { label: "List", target: "transactions-section", icon: "☰" },
+  ];
+
+  return (
+    <nav className="fixed inset-x-4 bottom-4 z-30 rounded-full bg-slate-950/95 p-2 text-white shadow-[0_18px_40px_rgba(15,23,42,0.28)] backdrop-blur md:hidden" aria-label="Mobile navigation">
+      <div className="grid grid-cols-4 gap-1">
+        {items.map((item) => (
+          <button
+            key={item.target}
+            onClick={() => onNavigate(item.target)}
+            className="flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-full text-[11px] font-semibold text-slate-300 transition hover:bg-white/10 hover:text-white focus:bg-white/10 focus:text-white"
+          >
+            <MobileIcon>{item.icon}</MobileIcon>
+            <span>{item.label}</span>
+          </button>
+        ))}
+      </div>
+    </nav>
+  );
+}
+
+function MiniTrend({ data }) {
+  const fallback = "M 0 54 C 22 18 42 18 64 42 S 106 70 128 34 S 172 18 196 48";
+  const points = data.map((item) => Number(item.Income || 0) - Number(item.Expense || 0));
+
+  if (points.length < 2) {
+    return <path d={fallback} fill="none" stroke="currentColor" strokeWidth="7" strokeLinecap="round" />;
+  }
+
+  const min = Math.min(...points);
+  const max = Math.max(...points);
+  const range = max - min || 1;
+  const coordinates = points.map((value, index) => ({
+    x: (index / (points.length - 1)) * 196,
+    y: 64 - ((value - min) / range) * 52,
+  }));
+  const path = coordinates.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`).join(" ");
+
+  return <path d={path} fill="none" stroke="currentColor" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />;
+}
+
+function MobileSummaryCard({ summary, monthlyData, transactionCount, email }) {
+  const netIsPositive = summary.net >= 0;
+
+  return (
+    <section id="mobile-dashboard-section" className="relative scroll-mt-28 overflow-hidden rounded-[2rem] bg-slate-950 p-4 text-white shadow-[0_20px_60px_rgba(15,23,42,0.2)] md:hidden">
+      <div className="rounded-[1.6rem] bg-[#ffe39a] p-5 text-slate-950">
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <p className="truncate text-sm font-bold">{email}</p>
+            <p className="mt-1 text-xs font-semibold text-slate-700">{transactionCount} transactions tracked</p>
+          </div>
+          <span className="rounded-full bg-white/70 px-3 py-1 text-xs font-black">{netIsPositive ? "+" : "-"} Net</span>
+        </div>
+
+        <div className="mt-6">
+          <p className="text-xs font-semibold text-slate-600">Net Cashflow</p>
+          <p className="mt-1 break-words text-[2rem] font-black leading-none tracking-tight">{rupiah.format(summary.net)}</p>
+        </div>
+
+        <svg viewBox="0 0 196 72" className="mt-4 h-16 w-full text-slate-950/55" aria-hidden="true">
+          <MiniTrend data={monthlyData} />
+        </svg>
+      </div>
+
+      <div className="mt-4 grid grid-cols-3 gap-2 text-center">
+        <div className="rounded-2xl bg-white/10 px-2 py-3">
+          <p className="text-[11px] font-semibold text-slate-300">Income</p>
+          <p className="mt-1 truncate text-xs font-black">{rupiah.format(summary.paidIncome)}</p>
+        </div>
+        <div className="rounded-2xl bg-white/10 px-2 py-3">
+          <p className="text-[11px] font-semibold text-slate-300">Expense</p>
+          <p className="mt-1 truncate text-xs font-black">{rupiah.format(summary.paidExpenses)}</p>
+        </div>
+        <div className="rounded-2xl bg-white/10 px-2 py-3">
+          <p className="text-[11px] font-semibold text-slate-300">Pending</p>
+          <p className="mt-1 truncate text-xs font-black">{rupiah.format(summary.pending)}</p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function TransactionCard({ item, onDelete }) {
+  const isIncome = item.type === "Income";
+
+  return (
+    <article className="rounded-[1.5rem] border border-slate-200 bg-white p-4 shadow-sm">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className={`rounded-full px-3 py-1 text-xs font-black ${isIncome ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-700"}`}>{item.type}</span>
+            <span className="text-xs font-semibold text-slate-400">{item.date}</span>
+          </div>
+          <h3 className="mt-3 truncate text-sm font-black text-slate-950">{item.client || "No client/vendor"}</h3>
+          <p className="mt-1 line-clamp-2 text-xs leading-5 text-slate-500">{item.description || item.category}</p>
+        </div>
+        <button onClick={() => onDelete(item.id)} className="flex h-9 w-9 flex-none items-center justify-center rounded-full bg-slate-100 text-lg font-black text-slate-500 transition hover:bg-slate-200 hover:text-slate-950" aria-label="Delete transaction">
+          ×
+        </button>
+      </div>
+      <div className="mt-4 flex items-end justify-between gap-3 border-t border-slate-100 pt-3">
+        <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">{item.status}</span>
+        <span className={`text-right text-base font-black ${isIncome ? "text-emerald-700" : "text-slate-950"}`}>{isIncome ? "+" : "-"} {rupiah.format(Number(item.amount || 0))}</span>
+      </div>
+    </article>
   );
 }
 
@@ -587,12 +705,15 @@ export default function CashflowTrackerTranslationAgency() {
   if (!session) return <AuthScreen onNotice={setNotice} />;
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
+    <main className="min-h-screen bg-[#eef2e9] text-slate-900 md:bg-slate-50">
       <AppAnimationStyles />
-      <div className="mx-auto max-w-7xl space-y-5 px-4 py-4 sm:px-6 md:space-y-6 md:px-8 md:py-6 lg:px-10">
-        <nav className="ts-nav-enter sticky top-3 z-20 mx-auto flex min-h-16 max-w-6xl flex-wrap items-center justify-between gap-3 rounded-3xl border border-slate-200 bg-white/95 px-4 py-3 shadow-sm backdrop-blur sm:px-6 md:px-8">
-          <div className="text-2xl font-black tracking-tight sm:text-3xl">TranSaintika</div>
-          <div className="order-3 flex w-full gap-2 overflow-x-auto rounded-full bg-slate-100 p-1 text-sm font-semibold sm:order-none sm:w-auto">
+      <div className="mx-auto max-w-7xl space-y-4 px-4 pb-28 pt-4 sm:px-6 md:space-y-6 md:px-8 md:py-6 lg:px-10">
+        <nav className="ts-nav-enter sticky top-3 z-20 mx-auto flex min-h-16 max-w-6xl items-center justify-between gap-3 rounded-[1.75rem] border border-white/70 bg-white/95 px-4 py-3 shadow-sm backdrop-blur sm:px-6 md:flex-wrap md:border-slate-200 md:px-8">
+          <div className="min-w-0 text-xl font-black tracking-tight sm:text-3xl">
+            TranSaintika
+            <span className="block text-xs font-semibold text-slate-400 md:hidden">Finance Dashboard</span>
+          </div>
+          <div className="hidden w-full gap-2 overflow-x-auto rounded-full bg-slate-100 p-1 text-sm font-semibold md:order-none md:flex md:w-auto">
             <button onClick={() => scrollToSection("dashboard-section")} className="flex-none rounded-full px-4 py-2 text-slate-700 transition hover:bg-white hover:text-slate-950 hover:shadow-sm">
               Dashboard
             </button>
@@ -603,10 +724,12 @@ export default function CashflowTrackerTranslationAgency() {
               Transactions
             </button>
           </div>
-          <AppButton onClick={signOut} className="!px-5 !py-2.5">Sign out</AppButton>
+          <AppButton onClick={signOut} className="!px-4 !py-2.5 text-xs sm:!px-5 sm:text-sm">Sign out</AppButton>
         </nav>
 
-        <section id="dashboard-section" className="ts-hero-rise ts-hero-delay-1 relative overflow-hidden scroll-mt-28 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6 md:p-8">
+        <MobileSummaryCard summary={summary} monthlyData={monthlyData} transactionCount={transactions.length} email={session.user.email} />
+
+        <section id="dashboard-section" className="ts-hero-rise ts-hero-delay-1 relative hidden overflow-hidden scroll-mt-28 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6 md:block md:p-8">
           <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-slate-100 blur-3xl" aria-hidden="true" />
           <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="min-w-0">
@@ -632,22 +755,22 @@ export default function CashflowTrackerTranslationAgency() {
 
         {notice && <ScrollReveal className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 shadow-sm">{notice}</ScrollReveal>}
 
-        <ScrollReveal as="section" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" delay={80}>
+        <ScrollReveal as="section" className="grid grid-cols-2 gap-3 sm:grid-cols-2 md:gap-4 xl:grid-cols-4" delay={80}>
           <StatCard label="Paid Income" value={summary.paidIncome} icon="↗" className="transition hover:-translate-y-1 hover:shadow-md" />
           <StatCard label="Paid Expenses" value={summary.paidExpenses} icon="↘" className="transition hover:-translate-y-1 hover:shadow-md" />
           <StatCard label="Net Cashflow" value={summary.net} icon="◼" className="transition hover:-translate-y-1 hover:shadow-md" />
           <StatCard label="Pending Amount" value={summary.pending} icon="…" className="transition hover:-translate-y-1 hover:shadow-md" />
         </ScrollReveal>
 
-        <ScrollReveal as="section" id="cashflow-section" className="scroll-mt-28 rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm" delay={120}>
-          <h2 className="text-2xl font-black tracking-tight">Cashflow Dashboard</h2>
-          <p className="mb-4 text-sm text-slate-500">Net cashflow trend over time based on paid income and paid expenses.</p>
+        <ScrollReveal as="section" id="cashflow-section" className="scroll-mt-28 rounded-[1.75rem] border border-slate-200 bg-white p-4 shadow-sm sm:p-7" delay={120}>
+          <h2 className="text-xl font-black tracking-tight sm:text-2xl">Cashflow Dashboard</h2>
+          <p className="mb-4 text-sm leading-6 text-slate-500">Net cashflow trend over time based on paid income and paid expenses.</p>
           <CashflowLineChart data={monthlyData} />
         </ScrollReveal>
 
-        <ScrollReveal as="section" className="grid gap-6 lg:grid-cols-3" delay={160}>
-          <div className="rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm">
-            <h2 className="mb-5 text-2xl font-black tracking-tight">Add Transaction</h2>
+        <ScrollReveal as="section" id="add-transaction-section" className="grid scroll-mt-28 gap-4 lg:grid-cols-3 lg:gap-6" delay={160}>
+          <div className="rounded-[1.75rem] border border-slate-200 bg-white p-4 shadow-sm sm:p-7">
+            <h2 className="mb-5 text-xl font-black tracking-tight sm:text-2xl">Add Transaction</h2>
             <form onSubmit={addTransaction} className="space-y-3">
               <Field label="Date"><input className={inputClass()} type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} /></Field>
               <Field label="Type"><select className={inputClass()} value={form.type} onChange={(e) => handleTypeChange(e.target.value)}><option>Income</option><option>Expense</option></select></Field>
@@ -659,20 +782,24 @@ export default function CashflowTrackerTranslationAgency() {
               <AppButton type="submit" className="w-full" disabled={loading}>{loading ? "Saving..." : "Add Transaction"}</AppButton>
             </form>
           </div>
-          <div className="rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm lg:col-span-2"><h2 className="mb-5 text-2xl font-black tracking-tight">Monthly Overview</h2><SimpleBarChart data={monthlyData} /></div>
+          <div className="rounded-[1.75rem] border border-slate-200 bg-white p-4 shadow-sm sm:p-7 lg:col-span-2"><h2 className="mb-5 text-xl font-black tracking-tight sm:text-2xl">Monthly Overview</h2><SimpleBarChart data={monthlyData} /></div>
         </ScrollReveal>
 
         <ScrollReveal as="section" id="transactions-section" className="scroll-mt-28 space-y-6" delay={180}>
-          <div className="rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm">
+          <div className="rounded-[1.75rem] border border-slate-200 bg-white p-4 shadow-sm sm:p-7">
             <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-              <h2 className="text-2xl font-black tracking-tight">Transactions</h2>
+              <h2 className="text-xl font-black tracking-tight sm:text-2xl">Transactions</h2>
               <div className="flex flex-col gap-2 md:flex-row">
                 <input className={inputClass()} placeholder="Search" value={query} onChange={(e) => setQuery(e.target.value)} />
                 <select className={inputClass()} value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}><option>All</option><option>Income</option><option>Expense</option></select>
                 <select className={inputClass()} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}><option>All</option><option>Paid</option><option>Pending</option></select>
               </div>
             </div>
-            <div className="overflow-x-auto">
+            <div className="space-y-3 md:hidden">
+              {filtered.map((item) => <TransactionCard key={item.id} item={item} onDelete={deleteTransaction} />)}
+              {filtered.length === 0 && <div className="rounded-2xl bg-slate-50 px-4 py-8 text-center text-sm text-slate-500">No transactions found.</div>}
+            </div>
+            <div className="hidden overflow-x-auto md:block">
               <table className="w-full text-left text-sm">
                 <thead className="border-b text-slate-500"><tr><th className="py-3 pr-4">Date</th><th className="pr-4">Type</th><th className="pr-4">Category</th><th className="pr-4">Client/Vendor</th><th className="pr-4">Status</th><th className="pr-4 text-right">Amount</th><th></th></tr></thead>
                 <tbody>
@@ -683,9 +810,10 @@ export default function CashflowTrackerTranslationAgency() {
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm"><h2 className="mb-5 text-2xl font-black tracking-tight">Category Breakdown</h2><CategoryBreakdown data={categoryData} /><p className="mt-5 text-sm text-slate-500">Data is stored online in Supabase and filtered by your authenticated user account.</p></div>
+          <div className="rounded-[1.75rem] border border-slate-200 bg-white p-4 shadow-sm sm:p-7"><h2 className="mb-5 text-xl font-black tracking-tight sm:text-2xl">Category Breakdown</h2><CategoryBreakdown data={categoryData} /><p className="mt-5 text-sm text-slate-500">Data is stored online in Supabase and filtered by your authenticated user account.</p></div>
         </ScrollReveal>
       </div>
+      <MobileBottomNav onNavigate={scrollToSection} />
     </main>
   );
 }

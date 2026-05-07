@@ -323,7 +323,7 @@ function inputClass() {
 
 function Field({ label, children }) {
   return (
-    <label className="block">
+    <label className="block min-w-0 max-w-full">
       <span className="mb-1 block text-xs font-semibold text-slate-600">{label}</span>
       {children}
     </label>
@@ -987,7 +987,11 @@ export default function CashflowTrackerTranslationAgency() {
           <div className="rounded-[1.75rem] border border-slate-200 bg-white p-4 shadow-sm sm:p-7">
             <h2 className="mb-5 text-xl font-black tracking-tight sm:text-2xl">Add Transaction</h2>
             <form onSubmit={addTransaction} className="space-y-3">
-              <Field label="Date"><input className={`${inputClass()} [min-inline-size:0]`} type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} /></Field>
+              <Field label="Date">
+                <span className="block max-w-full overflow-hidden rounded-xl">
+                  <input className={`${inputClass()} mobile-date-input`} type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} />
+                </span>
+              </Field>
               <Field label="Type"><select className={inputClass()} value={form.type} onChange={(e) => handleTypeChange(e.target.value)}><option>Income</option><option>Expense</option></select></Field>
               <Field label="Category"><select className={inputClass()} value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>{categories[form.type].map((category) => <option key={category}>{category}</option>)}</select></Field>
               <Field label="Client / Vendor"><input className={inputClass()} value={form.client} onChange={(e) => setForm({ ...form, client: e.target.value })} /></Field>

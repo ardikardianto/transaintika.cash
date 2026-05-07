@@ -1,1 +1,26 @@
 @import "tailwindcss";
+
+.mobile-date-input {
+  box-sizing: border-box;
+  display: block;
+  inline-size: 100%;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.mobile-date-input::-webkit-date-and-time-value,
+.mobile-date-input::-webkit-datetime-edit {
+  min-inline-size: 0;
+}
+
+.mobile-date-input::-webkit-date-and-time-value {
+  text-align: left;
+}
+
+@supports (-webkit-touch-callout: none) {
+  .mobile-date-input {
+    inline-size: -webkit-fill-available;
+  }
+}
